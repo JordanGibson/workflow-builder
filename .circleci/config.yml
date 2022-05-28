@@ -8,9 +8,19 @@ orbs:
   codecov: codecov/codecov@3.0.0
 
 jobs:
+  test:
+    resource_class: small
+    docker: 
+      - image: cimg/base:stable
+    steps:
+      - node/run:
+          version: '16.10'
+          pkg-manager: yarn
+          yarn-run: test:cov
   coverage:
     docker:
       - image: cimg/base:stable
+    resource_class: small
     steps:
       - codecov/upload:
           file: ./coverage/coverage-final.json 
@@ -21,8 +31,5 @@ workflows:
   pr_build: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - node/run:
-          version: '16.10'
-          pkg-manager: yarn
-          yarn-run: test:cov
+      - test
       - coverage  
